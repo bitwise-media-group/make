@@ -18,8 +18,8 @@ node_modules: package.json package-lock.json
 #   format / format:check / lint / lint:fix
 .PHONY: fmt-prose lint-prose
 fmt-prose: node_modules
-	@ npm run lint:fix
 	@ npm run format
+	@ npm run lint:fix
 
 lint-prose: node_modules
 	@ npm run lint
