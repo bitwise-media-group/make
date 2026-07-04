@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/bitwise-media-group/make/compare/v1.0.0...v1.1.0) (2026-07-04)
+
+
+### Features
+
+* pin the evolve CLI as a shared go-tool ([112a748](https://github.com/bitwise-media-group/make/commit/112a748018f8b4c3979c15315511d1683a62b939))
+
 ## 1.0.0 (2026-07-04)
 
 
