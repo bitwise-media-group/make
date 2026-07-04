@@ -1,5 +1,6 @@
 # terraform.mk — plan/apply/lint/docs for a Terraform module.
 # Generalises cloud-accounts/environments/cloud.mk.
+# Requires gotools.mk (provides $(TFLINT), $(TERRAFORM_DOCS) from .<tool>-version pins).
 ifndef MK_TERRAFORM_INCLUDED
 MK_TERRAFORM_INCLUDED := 1
 
@@ -29,12 +30,12 @@ tf-fmt:
 	@ $(TERRAFORM_BINARY) fmt -recursive
 
 # Check-mode pass wired into `lint`.
-tf-lint: init-no-backend
+tf-lint: init-no-backend $(TFLINT)
 	@ $(TERRAFORM_BINARY) validate .
-	@ go tool tflint
+	@ $(TFLINT)
 
 # Doc generation wired into `docs`.
-tf-docs:
-	@ go tool terraform-docs .
+tf-docs: $(TERRAFORM_DOCS)
+	@ $(TERRAFORM_DOCS) .
 
 endif

@@ -5,12 +5,12 @@
 #     include make/docs-site.mk
 #
 # `build` renders the site; there is nothing to unit-test, so test/e2e are stubs.
-# Repos without a tools/go.mod set `ADDLICENSE := go tool addlicense` first.
 ifndef MK_DOCS_SITE_INCLUDED
 MK_DOCS_SITE_INCLUDED := 1
 
 MK_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 include $(MK_DIR)fragments/common.mk
+include $(MK_DIR)fragments/gotools.mk
 include $(MK_DIR)fragments/license.mk
 include $(MK_DIR)fragments/node.mk
 include $(MK_DIR)fragments/docs.mk

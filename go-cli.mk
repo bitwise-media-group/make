@@ -15,6 +15,7 @@ MK_GO_CLI_INCLUDED := 1
 # $(MAKEFILE_LIST); fragments are resolved relative to it.
 MK_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 include $(MK_DIR)fragments/common.mk
+include $(MK_DIR)fragments/gotools.mk
 include $(MK_DIR)fragments/license.mk
 include $(MK_DIR)fragments/node.mk
 include $(MK_DIR)fragments/go.mk

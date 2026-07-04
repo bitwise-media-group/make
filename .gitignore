@@ -1,0 +1,4 @@
+# Installed Go tool binaries (gotools.mk), node deps, and test/coverage output.
+.bin/
+coverage/
+node_modules/

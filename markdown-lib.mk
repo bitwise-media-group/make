@@ -5,13 +5,13 @@
 #     include make/markdown-lib.mk
 #
 # Real lint (prose + license); build/test/e2e are no-ops that satisfy the CI and
-# release contracts. Repos without a tools/go.mod set
-# `ADDLICENSE := go tool addlicense` before the include.
+# release contracts.
 ifndef MK_MARKDOWN_LIB_INCLUDED
 MK_MARKDOWN_LIB_INCLUDED := 1
 
 MK_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 include $(MK_DIR)fragments/common.mk
+include $(MK_DIR)fragments/gotools.mk
 include $(MK_DIR)fragments/license.mk
 include $(MK_DIR)fragments/node.mk
 include $(MK_DIR)fragments/noop.mk

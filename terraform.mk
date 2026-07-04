@@ -12,6 +12,7 @@ MK_TERRAFORM_ARCHETYPE_INCLUDED := 1
 
 MK_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 include $(MK_DIR)fragments/common.mk
+include $(MK_DIR)fragments/gotools.mk
 include $(MK_DIR)fragments/terraform.mk
 
 .PHONY: init fmt lint docs ci pr
