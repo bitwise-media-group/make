@@ -1,0 +1,45 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+
+# Keep the SHA-pinned reusable workflows (bitwise-media-group/github-workflows) in
+# this repo's callers fresh. These are CI plumbing, not the library itself, so they
+# ship as `ci` — a release-please-ignored type — and never cut a Makefile-library
+# release. Our own actions ship straight through with no cooldown wait.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: ci
+      include: scope
+    cooldown:
+      default-days: 7
+      exclude:
+        - bitwise-media-group/*
+    groups:
+      bitwise-media-group:
+        patterns:
+          - bitwise-media-group/*
+      actions:
+        patterns:
+          - actions/*
+
+  # Prettier + markdownlint that `make lint` runs when this repo dogfoods its own
+  # markdown-lib archetype. Local dev tooling only — `build` is release-please-ignored
+  # so these never cut a library release.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+      prefix-development: build
+      include: scope
+    cooldown:
+      default-days: 7
+    groups:
+      dev-tooling:
+        patterns:
+          - "*"

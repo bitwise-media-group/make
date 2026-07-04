@@ -1,0 +1,39 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+
+# Fast-forward merge — thin caller for the org's reusable merge workflow. `/merge`
+# merges an approved, green PR now; `/auto-merge` (or the `auto-merge` label) arms
+# it to merge automatically once approved and green. Both preserve every commit
+# signature via the `ff-merge` action.
+#
+# The `workflows:` list below is every workflow that must be green before a merge,
+# plus "Merge Review Ack" (merge-review-ack.yaml) so an approval completes the
+# auto-merge. "Continuous Integration" is this repo's ci.yaml caller.
+#
+# Prerequisites (one-time, org-wide — see bitwise-media-group/ff-merge):
+#   - org variable FF_MERGE_CLIENT_ID and org secret FF_MERGE_PRIVATE_KEY
+#   - the "FF Merge" App installed on this repo and in the ruleset bypass list
+#
+# Pinned to a full commit SHA (tag in the comment); Dependabot keeps it fresh.
+name: Merge
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_run:
+    workflows: ["Continuous Integration", "Merge Review Ack"]
+    types: [completed]
+  schedule:
+    # backstop sweep of armed PRs for any missed event trigger
+    - cron: "17 * * * *"
+
+# the App token does the privileged work; the caller grants nothing
+permissions: {}
+
+jobs:
+  merge:
+    uses: bitwise-media-group/github-workflows/.github/workflows/merge.yaml@f327fb9c8287ef3842ea7c40b3b5ccb4071f5d7c # v4.2.0
+    with:
+      app-client-id: ${{ vars.FF_MERGE_CLIENT_ID }}
+    secrets:
+      app-private-key: ${{ secrets.FF_MERGE_PRIVATE_KEY }}

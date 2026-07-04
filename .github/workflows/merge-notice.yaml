@@ -1,0 +1,25 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+
+# Companion to merge.yaml. When a PR is opened it posts a one-time comment
+# explaining that this repo merges via `/merge`. pull_request_target (not
+# pull_request) so the notice also reaches fork PRs; the reusable workflow only
+# posts a static comment with a pull-requests:write token, so the elevated context
+# is safe. No secret needed.
+#
+# Pinned to a full commit SHA (tag in the comment); Dependabot keeps it fresh.
+name: Merge Notice
+
+on:
+  pull_request_target:
+    types: [opened]
+
+# the reusable workflow comments with GITHUB_TOKEN; grant just that
+permissions:
+  pull-requests: write
+
+jobs:
+  notice:
+    uses: bitwise-media-group/github-workflows/.github/workflows/merge-notice.yaml@f327fb9c8287ef3842ea7c40b3b5ccb4071f5d7c # v4.2.0
+    with:
+      pr-number: ${{ github.event.pull_request.number }}
