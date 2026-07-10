@@ -22,7 +22,7 @@ globs:
 ignores:
   # node cruft
   - "node_modules/**"
-  # the make library submodule (its prose is linted in its own repo)
+  # the toolchain library submodule (its prose is linted in its own repo)
   - ".mise/**"
   # uv-managed virtualenvs (site-packages ship their own markdown)
   - ".venv/**"

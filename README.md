@@ -1,8 +1,9 @@
-# make
+# toolchain
 
-Shared build tasks for the bitwise-media-group ecosystem, defined as [mise](https://mise.jdx.dev) tasks with a thin
-Makefile shim on top. Each repo consumes this library as a git submodule mounted at `.mise/` (bumped by Dependabot's
-`gitsubmodule` ecosystem) and reduces its own `Makefile` to one include and its own mise config to a few lines.
+Shared build tasks for the bitwise-media-group ecosystem — pinned developer tools, mise task archetypes, and house
+lint/license policy — with a thin Makefile shim on top. Each repo consumes this library as a git submodule mounted at
+`.mise/` (bumped by Dependabot's `gitsubmodule` ecosystem) and reduces its own `Makefile` to one include and its own
+mise config to a few lines. (Formerly named `make`, from its Makefile-fragment era; GitHub redirects the old URL.)
 
 See [RECOMMENDATION.md](RECOMMENDATION.md) for the original design rationale and the per-repo migration map (its
 Makefile-fragment mechanics are superseded by the mise-task layout described here).
@@ -10,7 +11,7 @@ Makefile-fragment mechanics are superseded by the mise-task layout described her
 ## Layout
 
 ```text
-make/                     # this repo == the consumer's .mise/ directory
+toolchain/                # this repo == the consumer's .mise/ directory
 ├── config.toml           # shared config: [settings], [tools] pins, [vars] knob
 │                         #   defaults, and the universal tasks (license, prose
 │                         #   lint, commit, actionlint); consumers load it
@@ -31,7 +32,7 @@ make/                     # this repo == the consumer's .mise/ directory
 Add the submodule once, mounted at `.mise/`:
 
 ```sh
-git submodule add https://github.com/bitwise-media-group/make.git .mise
+git submodule add https://github.com/bitwise-media-group/toolchain.git .mise
 ```
 
 Create a root `mise.toml` that picks the archetype and sets any knobs, then reduce the `Makefile` to one line:
@@ -79,8 +80,14 @@ Extension works both ways:
 - **make-side** — add a prerequisite in the repo Makefile (`pr: docs`, `lint: my-extra`). Prerequisites run **before**
   the forwarded task (the old library ran appended targets after `commit`; if ordering matters more precisely, use the
   mise-side mechanism).
-- **mise-side** — add or redefine tasks in the repo's root `mise.toml [tasks]`. Task merging is whole-task replacement,
-  so a redefined `pr` fully controls its sequence.
+- **mise-side** — add new tasks in the repo's root `mise.toml [tasks]`. To **redefine** a task the archetype already
+  defines, put it in a repo-local task file included _after_ the archetype (later includes win whole-task; an included
+  file also beats the same config's own `[tasks]` on name collisions):
+
+  ```toml
+  [task_config]
+  includes = [".mise/tasks/go-cli.toml", "tasks.toml"] # tasks.toml redefines e.g. fuzz or pr
+  ```
 
 Aggregates (`fmt`, `lint`, `ci`, `pr`) are sequential task composites, so mutating passes never race and `fmt` always
 precedes `lint` inside `pr`.
