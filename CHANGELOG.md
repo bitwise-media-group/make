@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/bitwise-media-group/toolchain/compare/v2.1.1...v2.1.2) (2026-07-14)
+
+
+### Bug Fixes
+
+* **lint:** silence kubescape /dev/null.txt warning with --logger warning ([18402cb](https://github.com/bitwise-media-group/toolchain/commit/18402cb7e7c0b4d6777ef8aa3973f2f457444e09))
+
 ## [2.1.1](https://github.com/bitwise-media-group/toolchain/compare/v2.1.0...v2.1.1) (2026-07-14)
 
 
