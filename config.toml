@@ -101,7 +101,8 @@ description = "run ./commit.sh (agent-prepared commit batch) if present"
 dir = "{{cwd}}"
 run = "if [ -x ./commit.sh ]; then ./commit.sh; fi"
 
-# House default ignores (generated/vendored trees, incl. the .mise/ submodule)
+# House default ignores (generated/vendored trees, incl. the .mise/ submodule,
+# and the agent-prepared commit.sh handoff every repo may transiently carry)
 # plus one -ignore flag per non-empty line in the repo's .licenseignore
 # (patterns never contain whitespace, so the word-split is safe; set -f keeps
 # the shell from glob-expanding them). A repo with no .licenseignore simply
@@ -111,7 +112,7 @@ description = "inject SPDX license headers (addlicense)"
 dir = "{{cwd}}"
 run = """
 set -euf
-ignores="-ignore node_modules/** -ignore .mise/** -ignore .claude/** -ignore .venv/** -ignore coverage/**"
+ignores="-ignore node_modules/** -ignore .mise/** -ignore .claude/** -ignore .venv/** -ignore coverage/** -ignore commit.sh"
 if [ -f .licenseignore ]; then
   for pattern in $(cat .licenseignore); do ignores="$ignores -ignore $pattern"; done
 fi
@@ -124,7 +125,7 @@ hide = true
 dir = "{{cwd}}"
 run = """
 set -euf
-ignores="-ignore node_modules/** -ignore .mise/** -ignore .claude/** -ignore .venv/** -ignore coverage/**"
+ignores="-ignore node_modules/** -ignore .mise/** -ignore .claude/** -ignore .venv/** -ignore coverage/** -ignore commit.sh"
 if [ -f .licenseignore ]; then
   for pattern in $(cat .licenseignore); do ignores="$ignores -ignore $pattern"; done
 fi
