@@ -13,8 +13,13 @@
 # default to --new --modified: full runs are LLM-priced, so the sweep is
 # opt-in via `evolve` directly rather than a task default.
 #
-# Repo-specific lint extras (fixture JSON validity, installer shell syntax,
-# CLI bootstrap) stay in the repo's own mise.toml, layered onto these gates.
+# The plugin/marketplace lint extras live here too: plugin-validate runs
+# `claude plugin validate` with a task-scoped claude CLI
+# (aqua:anthropics/claude-code on {{vars.claude_code_version}} — no npm
+# bootstrap, and never on the activated PATH where it would shadow the
+# developer's own claude), fixture-json checks every eval fixture parses with
+# the pinned node, and installer-syntax parses a root install.sh where one
+# exists.
 
 [evolve-checks]
 hide = true
@@ -22,13 +27,45 @@ dir = "{{config_root}}"
 tools = { "github:bitwise-media-group/evolve" = "{{vars.evolve_version}}" }
 run = "evolve run checks --strict"
 
+[plugin-validate]
+hide = true
+dir = "{{config_root}}"
+tools = { "aqua:anthropics/claude-code" = "{{vars.claude_code_version}}" }
+run = "claude plugin validate ."
+
+[fixture-json]
+hide = true
+dir = "{{config_root}}"
+run = """
+set -eu
+for f in plugins/*/evals/*/*.json; do
+  [ -e "$f" ] || continue
+  node -e 'JSON.parse(require("fs").readFileSync(process.argv[1]))' "$f" \
+    || { echo "invalid JSON: $f"; exit 1; }
+done
+"""
+
+[installer-syntax]
+hide = true
+dir = "{{config_root}}"
+run = "if [ -f install.sh ]; then sh -n install.sh; fi"
+
 [fmt]
 description = "format prose, inject license headers"
 run = [{ task = "fmt-prose" }, { task = "license" }]
 
 [lint]
-description = "prose lint + license check + evolve checks"
-run = [{ task = "license-check" }, { task = "lint-containers" }, { task = "lint-shell" }, { task = "lint-prose" }, { task = "evolve-checks" }]
+description = "prose lint + license check + evolve checks + plugin validate + fixture/installer checks"
+run = [
+  { task = "license-check" },
+  { task = "lint-containers" },
+  { task = "lint-shell" },
+  { task = "lint-prose" },
+  { task = "evolve-checks" },
+  { task = "plugin-validate" },
+  { task = "fixture-json" },
+  { task = "installer-syntax" }
+]
 
 [test]
 description = "validate the plugins and that eval results meet the minimum thresholds"
